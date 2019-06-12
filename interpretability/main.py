@@ -87,47 +87,46 @@ if __name__=="__main__":
      'correlation',
      ]    
     
-   # for i in range(1,len(bc_model.layers)):   
-    max_rep = 1
-    generate_patches = False
-    if not generate_patches:
-        max_rep=1
-    for repetition in range(0, max_rep):
-        patches, masks, nuclei, stats = rcv_utils.get_norm_patches(path='./data/datasets/training/0/')
-        if generate_patches:
-            tr_set=rcv_utils.get_cv_training_set('/home/ubuntu/preprocessing/maincode/files/masterthesis/iMIMIC-RCVs/data/datasets/breast_nuclei/Tissue Images/', repetition) 
-            patches, masks, nuclei, stats = rcv_utils.get_norm_patches(path='/home/ubuntu/preprocessing/maincode/files/masterthesis/iMIMIC-RCVs/data/datasets/training/'+str(repetition)+'/')
-            print('patchshape', patches.shape)
-        patches = [np.uint8(x) for x in patches]
-        patches=np.array(patches)
-        #nuclei_morph = rcv_utils.nuclei_morphology(stats)
-        # Nuclei texture statistics
-        nuclei_text = rcv_utils.nuclei_texture(patches, nuclei)
-        input=np.float32(patches)
-        input /= 255.0 
-        get_layer_output = K.function([bc_model.layers[0].input],
-                                  [bc_model.layers[12].output])   #get_layer tu saxeli ici
-        feats = get_layer_output([input])
-        if not os.path.exists('./rcv/'):
-            os.mkdir('./rcv/')
-            if not os.path.exists('./rcv/phis/'):
-                os.mkdir('./rcv/phis/')
-        np.save('./rcv/phis/'+str(repetition)+'_concepts_phis_'+str(1), np.asarray(feats[0]))
-    feats=[]
-    for repetition in range(max_rep):
-        patches, masks, nuclei, stats = rcv_utils.get_norm_patches(path='./data/datasets/training/0/')#str(repetition)+'/')
-        patches = [np.uint8(x) for x in patches]
-        patches=np.array(patches)
-        nuclei_text = rcv_utils.nuclei_texture(patches, nuclei)
-        feats=np.load('./rcv/phis/'+str(repetition)+'_concepts_phis_1.npy')  #nuclear patch features extracted from layer l
-        X=(np.asarray([x.ravel() for x in feats], dtype=np.float64))
-        for c in concepts[-3:]:
-            reg_score, cv = rcv_utils.solve_regression(X, np.asarray(nuclei_text[c]))  #score
-            np.save('./rcv/reg_score_'+c+'_'+str(repetition)+'.npy', reg_score)  #direction to increasing values
-            np.save('./rcv/rcv_'+c+'_'+str(repetition)+'.npy', cv)              
-            print('reg score', ' ', c, reg_score)
-            print('rcv textual', len(cv))
-        
+    for i in range(1,len(bc_model.layers)):   
+        print(i)
+        max_rep = 1
+        generate_patches = False
+        if not generate_patches:
+            max_rep=1
+        for repetition in range(0, max_rep):
+            patches, masks, nuclei, stats = rcv_utils.get_norm_patches(path='./data/datasets/training/0/')
+            if generate_patches:
+                tr_set=rcv_utils.get_cv_training_set('/home/ubuntu/preprocessing/maincode/files/masterthesis/iMIMIC-RCVs/data/datasets/breast_nuclei/Tissue Images/', repetition) 
+                patches, masks, nuclei, stats = rcv_utils.get_norm_patches(path='/home/ubuntu/preprocessing/maincode/files/masterthesis/iMIMIC-RCVs/data/datasets/training/'+str(repetition)+'/')
+            patches = [np.uint8(x) for x in patches]
+            patches=np.array(patches)
+            #nuclei_morph = rcv_utils.nuclei_morphology(stats)
+            # Nuclei texture statistics
+            nuclei_text = rcv_utils.nuclei_texture(patches, nuclei)
+            input=np.float32(patches)
+            input /= 255.0 
+            get_layer_output = K.function([bc_model.layers[0].input],
+                                      [bc_model.layers[i].output])   #get_layer tu saxeli ici
+            feats = get_layer_output([input])
+            if not os.path.exists('./rcv/'):
+                os.mkdir('./rcv/')
+                if not os.path.exists('./rcv/phis/'):
+                    os.mkdir('./rcv/phis/')
+            np.save('./rcv/phis/'+str(repetition)+'_concepts_phis_'+str(1), np.asarray(feats[0]))
+        feats=[]
+        for repetition in range(max_rep):
+            patches, masks, nuclei, stats = rcv_utils.get_norm_patches(path='./data/datasets/training/0/')#str(repetition)+'/')
+            patches = [np.uint8(x) for x in patches]
+            patches=np.array(patches)
+            nuclei_text = rcv_utils.nuclei_texture(patches, nuclei)
+            feats=np.load('./rcv/phis/'+str(repetition)+'_concepts_phis_1.npy')  #nuclear patch features extracted from layer l
+            X=(np.asarray([x.ravel() for x in feats], dtype=np.float64))
+            for c in concepts[-3:]:
+                reg_score, cv = rcv_utils.solve_regression(X, np.asarray(nuclei_text[c]))  #score
+                np.save('./rcv/reg_score_'+c+'_'+str(repetition)+'.npy', reg_score)  #direction to increasing values
+                np.save('./rcv/rcv_'+c+'_'+str(repetition)+'.npy', cv)              
+                print('layer',' ',i,' reg score', ' ', c, reg_score)
+    """        
     #--------------------- Sensitivity scores -----------------------------------------------
     test_x=getnpfeatures('/home/ubuntu/preprocessing/maincode/files/testing/*.png')
     normalised_tumor_patches = np.array([np.uint8(patch) for patch in test_x])
@@ -170,3 +169,4 @@ if __name__=="__main__":
     print(brs)
     brs=2*(brs-min(brs))/(max(brs)-min(brs))-1
     print('brs',brs)
+    """

@@ -146,7 +146,7 @@ def getlabels1(files,N):
 if __name__=="__main__":    
    
     #-------------------------------option 1: train on full data with original labels, specify your path --------------------
- 
+    """
     y_test=getlabels('/home/ubuntu/preprocessing/maincode/files/testing/')
     x_test=getnpfeatures('/home/ubuntu/preprocessing/maincode/files/testing/*.png')
     x_val=getnpfeatures('/home/ubuntu/preprocessing/maincode/files/validation/*.png')
@@ -154,12 +154,12 @@ if __name__=="__main__":
     y_train=getlabels('/home/ubuntu/preprocessing/maincode/files/subset_training/','/home/ubuntu/preprocessing/maincode/files/training/')
     x_train=getnpfeatures('/home/ubuntu/preprocessing/maincode/files/subset_training/*.png','/home/ubuntu/preprocessing/maincode/files/training/*.png') 
     model=load_model('original_labels.h5',custom_objects={'auc': auc})
-
+    """
     #----------------------------------------------------------------------------------------------
     
-    """
+    
     #------------- option 2: this example is if you want to train on the desired number of training samples from the set that is assumed to be label(subset_training)
-    n=3000  # train on the desired number of instances
+    n=6000  # train on the desired number of instances
     print('when n is ', n)
     path='/home/ubuntu/preprocessing/maincode/files/subset_training/' #path to your training instances
     file_names= os.listdir(path)  
@@ -167,17 +167,18 @@ if __name__=="__main__":
     file_names=np.array([file_names[i] for i in p])
     y_train=getlabels1(file_names, n)
     x_train=getnpfeatures1('/home/ubuntu/preprocessing/maincode/files/subset_training/',file_names,n)        
-    x_train,x_test,y_train,y_test= train_test_split(
-                    x_train,y_train, test_size=0.30,random_state=42)
+    #x_train,x_test,y_train,y_test= train_test_split(
+    #                x_train,y_train, test_size=0.30,random_state=42)
     x_train,x_val,y_train,y_val= train_test_split(
                     x_train,y_train, test_size=0.20,random_state=42)
+    y_test=getlabels('/home/ubuntu/preprocessing/maincode/files/testing/')
+    x_test=getnpfeatures('/home/ubuntu/preprocessing/maincode/files/testing/*.png')
     with open('original_labels.json', 'r') as json_file:  #the best architecture found by nni
         loaded_model_json = json_file.read()
     model = build_graph_from_json(loaded_model_json)
     optimizer = SGD(lr=0.001, momentum=0.9, decay=1e-5)
     model.compile(loss="binary_crossentropy", optimizer=optimizer, metrics=[auc]) 
     #----------------------------------------------------------------------------------------------------------------
-    """
     x_test = x_test.astype("float32")
     x_train = x_train.astype("float32")
     y_train = to_categorical(y_train, 2)            
@@ -191,7 +192,6 @@ if __name__=="__main__":
     pr=0
     rc=0
     f1=0
-    """
     #-------------------------- comment it out if you use option 1 ----------------------------------------
     model.fit(
         x=x_train,
@@ -205,7 +205,6 @@ if __name__=="__main__":
         ],
         ) 
     #-------------------------------------------------------------------------------------------------------
-    """
     preds_te=model.predict(x_test)
     print(preds_te)
     preds_te=np.argmax(preds_te,axis=1)
@@ -226,6 +225,6 @@ if __name__=="__main__":
     print('final f1',f1)
     conf_mat=confusion_matrix(y_test,preds_te)
     print('conf matrix of newly labeled',conf_mat)
-    #model.save('original_labels_'+str(n)+'.h5')
-    #model.save_weights('original_labels_w_'+str(n)+'.h5')
+    model.save('original_labels_'+str(n)+'.h5')
+    model.save_weights('original_labels_w_'+str(n)+'.h5')
     #plot_model(model,show_shapes=True,to_file='alllabels_endmodel.png')
