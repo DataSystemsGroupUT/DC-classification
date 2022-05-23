@@ -1,4 +1,6 @@
-Invasive Ductal Carcinoma(IDC) is the most aggresive breast cancer. In this github repo, we classify IDC/not IDC 
+# An Interpretable Semi-Supervised Framework for Patch-Based Classification of Breast Cancer
+
+. In this github repo, we classify IDC/not IDC 
 image patches using semi-supervised learning. 
 
 Dataset:
