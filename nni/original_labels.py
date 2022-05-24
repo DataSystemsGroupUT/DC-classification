@@ -167,10 +167,6 @@ if __name__=="__main__":
     file_names=np.array([file_names[i] for i in p])
     y_train=getlabels1(file_names, n)
     x_train=getnpfeatures1('/home/ubuntu/preprocessing/maincode/files/subset_training/',file_names,n)        
-    #x_train,x_test,y_train,y_test= train_test_split(
-    #                x_train,y_train, test_size=0.30,random_state=42)
-    x_train,x_val,y_train,y_val= train_test_split(
-                    x_train,y_train, test_size=0.20,random_state=42)
     y_test=getlabels('/home/ubuntu/preprocessing/maincode/files/testing/')
     x_test=getnpfeatures('/home/ubuntu/preprocessing/maincode/files/testing/*.png')
     with open('original_labels.json', 'r') as json_file:  #the best architecture found by nni
