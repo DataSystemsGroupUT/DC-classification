@@ -66,8 +66,7 @@ otherwise, you still need to install nni using the terminal codes, explained at 
 After you install nni, you can refer to our nni folder. The model weights are saved to reproduce 
 the results. How, is explained in nni/readme.md
 ### Interpretability
-
-Model interpretability: code is based on this work https://github.com/medgift/iMIMIC-RCVs.
+We adopted the technique of Graziani et al[2] which is summarized as follows. The first step is to define the interesting concepts relevant to IDC prediction. Nuclear morphometric and appearance features such as average size and pleomorphism can help in assessing cancer grades and predicting treatment[3]. In this work, we use concepts by referring to the Nottingham Histologic Grading system (NHG)[4]. Such concepts are extracted from the nuclear segmentation dataset that quantify the impact of variations in nuclei size, area and texture. The second step is to compute the Pearson product-moment correlation coefficient $\rho$ between each concept and the network prediction for each input patch. Thd code of the global interpretability used in this work can be found on this link https://github.com/medgift/iMIMIC-RCVs.
 
 ## Other dependencies:
 All the required packages should be already installed if you install nni requirements.txt in nni repo.
@@ -75,6 +74,9 @@ If you need to run interpretability, you will need you install packages mentione
 
 ## Refrences
 [1] Kumar, Neeraj, Ruchika Verma, Sanuj Sharma, Surabhi Bhargava, Abhishek Vahadane, and Amit Sethi. "A dataset and a technique for generalized nuclear segmentation for computational pathology." IEEE transactions on medical imaging 36, no. 7 (2017): 1550-1560
+[2] Graziani M, Andrearczyk V, Müller H. Regression concept vectors for bidirectional explanations in histopathology. InUnderstanding and Interpreting Machine Learning in Medical Image Computing Applications 2018 Sep 20 (pp. 124-132). Springer, Cham.
+[3] Beck, A.H., Sangoi, A.R., Leung, S., Marinelli, R.J., Nielsen, T.O., Van De Vijver, M.J., West, R.B., Van De Rijn, M. and Koller, D., 2011. Systematic analysis of breast cancer morphology uncovers stromal features associated with survival. Science translational medicine, 3(108), pp.108ra113-108ra113.
+[4] Elston, C.W. and Ellis, I.O., 1991. Pathological prognostic factors in breast cancer. I. The value of histological grade in breast cancer: experience from a large study with long‐term follow‐up. Histopathology, 19(5), pp.403-410.
 
     
     
