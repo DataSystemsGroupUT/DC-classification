@@ -17,15 +17,20 @@ directory:
  
 python3 test_train_valisplit
 
+
+
 In this study we assume that only 10% of the data is labeled and the rest is unlabeled. We select 10% of available
 training and validation instances, that are 12,000 image patches and use them to train our model to label another 90%
 of images. Thus, you need to make another folder, we call it subset_training.
-We have selected 6000 positive and 6000 negative samples from the training folder and put them in the subset_training folder.
+We randomly selected 6000 positive and 6000 negative samples from the training folder and put them in the subset_training folder.
 This can be also done by calling python3 dataset/balance_classes.py. Here you will need to specify your own origin,destination folders.
 
 After you make this folder, following codes were used to try different labeling methods:
 
 10gb_labelling_vgg_gan.py 
+
+Data Augmentation
+
     This is the best labeling method that trains DCGAN on the labeled instances and generates synthetic
     images that are added in the training set. After new instances are added in the labeled set, VGG-16
     is adopted to extract the features from all the labeled and unlabeled instances, thus features are 
