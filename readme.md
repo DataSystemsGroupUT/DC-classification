@@ -20,7 +20,7 @@ python3 test_train_valisplit
 
 
 In this study we assume that only 10% of the data is labeled and the rest is unlabeled. We select 10% of available
-training and validation instances, that are 12,000 image patches and use them to train our model to label another 90%
+training and validation instances, denoted D_{train} comprises of 12,000 patches and use them to train our model to label another 90%
 of images. Thus, you need to make another folder, we call it subset_training.
 We randomly selected 6000 positive and 6000 negative samples from the training folder and put them in the subset_training folder.
 This can be also done by calling python3 dataset/balance_classes.py. Here you will need to specify your own origin,destination folders.
@@ -29,25 +29,22 @@ After you make this folder, following codes were used to try different labeling 
 
 10gb_labelling_vgg_gan.py 
 
-Data Augmentation
+### Data Augmentation
 
-    This is the best labeling method that trains DCGAN on the labeled instances and generates synthetic
-    images that are added in the training set. After new instances are added in the labeled set, VGG-16
-    is adopted to extract the features from all the labeled and unlabeled instances, thus features are 
-    extracted from subset_training, the rest of training instances and full validation instances. For 
-    synthetic image generation refer to the directory DCGAN. For feature extraction, refer to the VGG_feature_extraction
-    directory.
-Other labeling methods we have tried:
+In this work, we employ DCGAN to generate synthetic patches. The DCGAN generator consists of a fully connected layer projecting an input of 100-dimensional uniform distribution to four convolution layers with filter sizes of 256, 128, 64 and 32 and kernel size of 5$\times$5. Except for the output layer, the used activation function is rectified linear unit (Relu). Batch normalization is performed on all layers except for the last one. We train a DCGAN on $D_{train}$ as a preprocessing step. The DCGAN is trained separately on each label using multi-channel image patches containing both the acquired image and the ground truth label. The number of synthetic examples generated for each class is 6k patches. Such 12k generated synthetic patches, denoted $D_{GAN}$, are then used to augment $D_{train}$. DCGAN is trained using Stochastic Gradient Descent as an optimizer for 1200 epochs with the \emph{batch size} of 16 and \emph{learning rate} equal to 0.0003. The loss function applied is a binary cross-entropy. Parameters are the same for both discriminator and generator. For $D_{GAN}$ synthetic patches generation, please refer to the directory DCGAN.
 
-1gb_labelling.py
+### Feature extraction
+
+In our experiments, we have considered this approach. Inspired by~\cite{rakhlin2018deep}, in this work, we use a standard pre-trained VGG-16 network for feature extraction. We follow the same procedure for extracting features from both labelled and unlabelled data. We remove the fully connected layers from the VGG network and apply the Global Average Pooling operation to the four internal convolutions layers with 128, 256, 512, and 512 channels, respectively. Next, we concatenate them to form one vector of length 1408. For feature extraction, refer to the VGG_feature_extraction directory. Other labeling methods we have tried:
+ * 1gb_labelling.py
     this method traines 1GB on the subset_training instances on the VGG-16 features.
-10gb_labelling_vgg.py   
+* 10gb_labelling_vgg.py   
     this method trains 10GB on the subset_training instances, features extracted 
     from  the VGG-16 network.
-dif_models_labelling.py
+* dif_models_labelling.py
     This file consists of many machine learning classification algorithms. Featres are
     again extracted from VGG-16 pretrained network.
-10gb_labelling_pca
+* 10gb_labelling_pca
     this file traines 10gb models on the dimensionality reduced features using PCA.
 
 After you have labeled all the instances( full training, validation folders):
